@@ -68,6 +68,8 @@ def home():
             if user.login is None:
                 return redirect(url_for('oauth2_authorize', provider='42', discord_id=current_user_discord.id))
             return render_template('index.html', user=user)
+        else:
+            return render_template('index.html', user=user)
 
     return render_template('index.html', oauth_uri=OAUTH_URL)
 
@@ -122,7 +124,6 @@ def callback_42():
     return redirect(url_for('home'))
 
 def change_user_nickname(token: str, user_id: str, server_id: str, nickname: str, usual_first_name: str) -> bool:
-
     url = f'https://discordapp.com/api/v8/guilds/{server_id}/members/{user_id}'
     headers = {
         'Authorization': f'Bot {token}'
@@ -155,11 +156,40 @@ def add_user_to_server(token: str, user_id: str, server_id: str, access_token: s
         print(f'Error adding user {user_id} to server with ID {server_id}')
         return False
 
+def remove_user_from_server(token: str, user_id: str, server_id: str) -> bool:
+    url = f'https://discordapp.com/api/v8/guilds/{server_id}/members/{user_id}'
+    headers = {
+        'Authorization': f'Bot {token}'
+    }
+
+    response = requests.delete(url, headers=headers)
+    if response.status_code == 204:
+        print(f'User {user_id} removed from server with ID {server_id}')
+        return True
+    else:
+        print(f'Error removing user {user_id} from server with ID {server_id}')
+        return False
+
+
 @app.route('/logout')
 def logout():
     session.clear()
-    db.delete(User)
     return redirect("/")
+
+
+@app.route('/delete_account')
+def delete_account():
+    if 'token' in session:
+        bearer_client = APIClient(session['token'], bearer=True)
+        current_user_discord = bearer_client.users.get_current_user()
+        user = db.session.scalar(db.select(User).where(User.discord_id == current_user_discord.id))
+        if user is not None:
+            remove_user_from_server(TOKEN, user.discord_id, GUILD_ID)
+            db.session.delete(user)
+            db.session.commit()
+            session.clear()
+    return redirect("/")
+
 
 with app.app_context():
     db.create_all()
