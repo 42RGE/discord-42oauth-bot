@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        {% if user %}
+        <h1>Hello, {{user.login}}!</h1>
+        <img src="{{user.avatar_url}}" alt="Avatar" />
+        <br />
+        <a href="/logout"><button>Logout</button></a>
+        {% else %}
+        <h1>Hello, Guest!</h1>
+        <a href="{{oauth_uri}}"><button>Login with Discord</button></a>
+        {% endif %}
+    </body>
+</html>
