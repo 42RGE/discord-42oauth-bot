@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 from urllib.parse import urlencode
 import requests
+from utils import change_user_nickname, add_user_to_server, remove_user_from_server
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'top secret'
@@ -21,23 +22,6 @@ app.config['OAUTH2_PROVIDERS'] = {
         'scopes': ['public'],
     }
 }
-
-def check_variables_exist():
-    variables = {
-            'DISCORD_TOKEN': TOKEN,
-            'CLIENT_SECRET': CLIENT_SECRET,
-            'DISCORD_REDIRECT_URI': REDIRECT_URI,
-            'DISCORD_OAUTH_URL': OAUTH_URL,
-            'DISCORD_GUILD_ID': GUILD_ID,
-            '42_CLIENT_ID': FTWO_CLIENT_ID,
-            '42_CLIENT_SECRET': FTWO_CLIENT_SECRET
-        }
-
-    missing_vars = [var_name for var_name, var_value in variables.items() if var_value is None]
-    if missing_vars:
-        raise ValueError(f'Missing environment variables: {", ".join(missing_vars)}')
-
-
 
 client = APIClient(TOKEN, client_secret=CLIENT_SECRET)
 db = SQLAlchemy(app)
@@ -122,54 +106,6 @@ def callback_42():
     change_user_nickname(TOKEN, discord_id, GUILD_ID, user.login, first_name)
     db.session.commit()
     return redirect(url_for('home'))
-
-def change_user_nickname(token: str, user_id: str, server_id: str, nickname: str, usual_first_name: str) -> bool:
-    url = f'https://discordapp.com/api/v8/guilds/{server_id}/members/{user_id}'
-    headers = {
-        'Authorization': f'Bot {token}'
-    }
-    data = {
-        "nick": f'{nickname} ({usual_first_name})'
-    }
-    response = requests.patch(url, headers=headers, json=data)
-    if response.status_code == 200 or response.status_code == 204:
-        return True
-    print(f'Error changing nickname for user {user_id} in server with ID {server_id}')
-    return False
-
-
-def add_user_to_server(token: str, user_id: str, server_id: str, access_token: str) -> bool:
-    url = f'https://discordapp.com/api/v8/guilds/{server_id}/members/{user_id}'
-    headers = {
-        'Authorization': f'Bot {token}'
-    }
-
-    data = {
-        "access_token": access_token
-    }
-
-    response = requests.put(url, headers=headers, json=data)
-    if response.status_code == 201:
-        print(f'User {user_id} added to server with ID {server_id}')
-        return True
-    else:
-        print(f'Error adding user {user_id} to server with ID {server_id}')
-        return False
-
-def remove_user_from_server(token: str, user_id: str, server_id: str) -> bool:
-    url = f'https://discordapp.com/api/v8/guilds/{server_id}/members/{user_id}'
-    headers = {
-        'Authorization': f'Bot {token}'
-    }
-
-    response = requests.delete(url, headers=headers)
-    if response.status_code == 204:
-        print(f'User {user_id} removed from server with ID {server_id}')
-        return True
-    else:
-        print(f'Error removing user {user_id} from server with ID {server_id}')
-        return False
-
 
 @app.route('/logout')
 def logout():
