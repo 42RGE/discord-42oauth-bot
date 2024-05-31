@@ -14,6 +14,19 @@ def change_user_nickname(token: str, user_id: str, server_id: str, nickname: str
     print(f'Error changing nickname for user {user_id} in server with ID {server_id}')
     return False
 
+def add_user_role(token: str, user_id: str, server_id: str, role_id: str) -> bool:
+    url = f'https://discordapp.com/api/v8/guilds/{server_id}/members/{user_id}/roles/{role_id}'
+    headers = {
+        'Authorization': f'Bot {token}'
+    }
+    response = requests.put(url, headers=headers)
+    if response.status_code == 204:
+        print(f'Role {role_id} added to user {user_id} in server with ID {server_id}')
+        return True
+    else:
+        print(f'Error adding role {role_id} to user {user_id} in server with ID {server_id}')
+        return False
+
 def add_user_to_server(token: str, user_id: str, server_id: str, access_token: str) -> bool:
     url = f'https://discordapp.com/api/v8/guilds/{server_id}/members/{user_id}'
     headers = {

@@ -104,6 +104,7 @@ def callback_42():
     else content['first_name']
     add_user_to_server(TOKEN, discord_id, GUILD_ID, session['token'])
     change_user_nickname(TOKEN, discord_id, GUILD_ID, user.login, first_name)
+    add_user_role(TOKEN, discord_id, GUILD_ID, 1246021012328419460)
     db.session.commit()
     return redirect(url_for('home'))
 
