@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 from urllib.parse import urlencode
 import requests
-from utils import change_user_nickname, add_user_to_server, remove_user_from_server
+from utils import change_user_nickname, add_user_to_server, remove_user_from_server, add_user_role
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'top secret'
