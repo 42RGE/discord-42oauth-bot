@@ -10,6 +10,7 @@ OAUTH_URL=os.environ.get('DISCORD_OAUTH_URL')
 GUILD_ID=os.environ.get('DISCORD_GUILD_ID')
 FTWO_CLIENT_ID=os.environ.get('42_CLIENT_ID')
 FTWO_CLIENT_SECRET=os.environ.get('42_CLIENT_SECRET')
+DISCORD_ROLE_ID=int(os.environ.get('DISCORD_ROLE_ID', ""))
 
 
 def check_variables_exist():
@@ -20,7 +21,8 @@ def check_variables_exist():
         'DISCORD_OAUTH_URL': OAUTH_URL,
         'DISCORD_GUILD_ID': GUILD_ID,
         '42_CLIENT_ID': FTWO_CLIENT_ID,
-        '42_CLIENT_SECRET': FTWO_CLIENT_SECRET
+        '42_CLIENT_SECRET': FTWO_CLIENT_SECRET,
+        'DISCORD_ROLE_ID': DISCORD_ROLE_ID
     }
 
     missing_vars = [var_name for var_name, var_value in variables.items() if var_value is None]
