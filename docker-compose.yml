@@ -1,0 +1,17 @@
+services:
+  discord-flask:
+    build: ./discord-flask
+    container_name: discord-flask
+    restart: always
+    environment:
+      - FT_CLIENT_ID=${FT_CLIENT_ID}
+      - FT_CLIENT_SECRET=${FT_CLIENT_SECRET}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - DISCORD_REDIRECT_URI=${DISCORD_REDIRECT_URI}
+      - DISCORD_OAUTH_URL=${DISCORD_OAUTH_URL}
+      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
+      - DISCORD_ROLE_ID=${DISCORD_ROLE_ID}
+
+    ports:
+      - "4242:4242"
