@@ -22,7 +22,7 @@ def oauth2_authorize(provider, discord_id):
     provider_data = app.config['OAUTH2_PROVIDERS'][provider]
     params = {
         'client_id': provider_data['client_id'],
-        'redirect_uri': url_for('oauth.callback_42', _external=True, discord_id=discord_id),
+        'redirect_uri': url_for('oauth.callback_42', _external=True, discord_id=discord_id, _scheme='https'),
         'response_type': 'code',
         'scope': ' '.join(provider_data['scopes']),
     }
@@ -46,7 +46,7 @@ def callback_42():
         'client_id': provider_data['client_id'],
         'client_secret': provider_data['client_secret'],
         'code': code,
-        'redirect_uri': url_for('oauth.callback_42', _external=True, discord_id=discord_id),
+        'redirect_uri': url_for('oauth.callback_42', _external=True, discord_id=discord_id, _scheme='https'),
     })
     access_token = response.json().get('access_token')
     response = requests.get(provider_data['userinfo']['url'],

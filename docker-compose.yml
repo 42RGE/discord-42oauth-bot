@@ -12,6 +12,17 @@ services:
       - DISCORD_OAUTH_URL=${DISCORD_OAUTH_URL}
       - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
       - DISCORD_ROLE_ID=${DISCORD_ROLE_ID}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.discord-rge.rule=Host(`discord-rge.emaugale.com`)"
+      - "traefik.http.routers.discord-rge.entrypoints=https"
+      - "traefik.http.routers.discord-rge.tls.certresolver=myresolver"
+      - "traefik.http.routers.discord-rge.tls=true"
+      - "traefik.http.services.discord-rge.loadbalancer.server.port=4242"
 
-    ports:
-      - "4242:4242"
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
