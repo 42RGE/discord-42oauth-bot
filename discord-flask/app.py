@@ -64,6 +64,10 @@ def logout():
     return redirect("/")
 
 
+@app.route('/health')
+def health():
+    return "OK"
+
 @app.route('/delete_account')
 def delete_account():
     if 'token' in session:
